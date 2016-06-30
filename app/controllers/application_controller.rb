@@ -3,7 +3,59 @@ class ApplicationController < Sinatra::Base
     set :public_folder, 'public'
     set :views, 'app/views'
   end
+
+  # render list of all recipes, duplicate
   get '/' do
+    @recipes = Recipe.all 
     erb :index
+  end
+
+  # render list of all recipes
+  get '/recipes' do 
+    @recipes = Recipe.all 
+    erb :index
+  end
+
+  # render edit form
+  get '/recipes/new' do
+    erb :new
+  end
+
+  # create
+  post '/recipes' do 
+    @recipe = Recipe.create(params)
+    #erb :show
+    redirect to "/recipes/#{@recipe.id}"
+
+    #redirect to '/recipes/#{@recipe.id}'
+  end
+
+  # show
+  get '/recipes/:id' do 
+    @recipe = Recipe.find_by_id(params[:id])
+    erb :show
+  end
+
+  # edit form
+  get '/recipes/:id/edit' do 
+    @recipe = Recipe.find_by_id(params[:id])
+    erb :edit
+  end
+
+  # update
+  patch '/recipes/:id' do 
+    @recipe = Recipe.find_by_id(params[:id])
+    @recipe.name = params[:name]
+    @recipe.ingredients = params[:ingredients]
+    @recipe.cook_time = params[:cook_time]
+    @recipe.save
+    redirect to "/recipes/#{@recipe.id}"
+  end
+
+  # delete
+  delete '/recipes/:id/delete' do 
+    @recipe = Recipe.find_by_id(params[:id])
+    @recipe.delete
+    redirect to "/recipes"
   end
 end
